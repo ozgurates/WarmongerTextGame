@@ -1,7 +1,7 @@
 class Faction:
     firstEnemy= None
     secondEnemy = None
-
+    
     def __init__(self,name,numOfUnits,attackPoint,healthPoint,regNumber):
         self.name=name
         self.numOfUnits=numOfUnits
@@ -16,16 +16,16 @@ class Faction:
         self.secondEnemy = obj2
 
     def PerformAttack(self):
-        pass
+        return self.numOfUnits * self.attackPoint
 
-    def ReceiveAttack(self):
-        pass
+    def ReceiveAttack(self,attack):
+        self.numOfUnits -= attack
 
-    def PurchaseWeapons(self):
-        pass
+    def PurchaseWeapons(self,newWeapon):
+        self.attackPoint += newWeapon
 
-    def PurchaseArmors(self):
-        pass
+    def PurchaseArmors(self,newArmor):
+        self.healthPoint += armor
 
 
     def Print(self):
@@ -40,6 +40,7 @@ class Faction:
         print("Total Health: "+str(self.totalHealth))
 
     def EndTurn(self):
+        self.numOfUnits += self.regNumber
 
         if(self.numOfUnits <= 0):
             if(self.numOfUnits < 0):
@@ -47,6 +48,7 @@ class Faction:
                 self.isAlive = False
             else:
                 self.isAlive= False
+        self.totalHealth = self.numOfUnits * self.healthPoint
 
 
 class Orcs(Faction):
@@ -54,21 +56,39 @@ class Orcs(Faction):
         super().__init__(self,name,numOfUnits,attackPoint,healthPoint,regNumber)
 
     def PerformAttack(self):
-        if(super().secondEnemy != None):
-            (self.numOfUnits)*(7/10)
+        if(self.firstEnemy.isAlive and self.secondEnemy.isAlive):
+            if(self.firstEnemy.__class__.__name__ == "Dwarves"):
+                self.firstEnemy.ReceiveAttack(super().PerformAttack()*0.7)
+                self.secondEnemy.ReceiveAttack(super().PerformAttack()*0.3)
+            elif(self.firstEnemy.__class__.__name__ == "Elves"):
+                self.firstEnemy.ReceiveAttack(super().PerformAttack()*0.3)
+                self.secondEnemy.ReceiveAttack(super().PerformAttack()*0.7)
+            else:
+                print('Something has gone wrong!')
+        elif(self.firsEnemy.isAlive and not self.secondEnemy.isAlive):
+            self.firstEnemy.ReceiveAttack(super().PerformAttack())
+        elif(not self.firstEnemy.isAlive and self.secondEnemy.isAlive):
+            self.secondEnemy.ReceiveAttack(super().PerformAttack())
         else:
-            #attacks with all units
-            super().firstEnemy.totalHealth -= self.numOfUnits*self.attackPoint
-    
-    def ReceiveAttack(self):
-        pass
+            print('All enemies are dead! ')
 
 
-    def PurchaseWeapons(self):
-        pass
+
+    def ReceiveAttack(self,attacker):
+        if(attacker.__class__.__name__ == "Dwarves"):
+            super().ReceiveAttack((attacker.attackPoint*(0.8))/(self.healthPoint))
+        elif(attacker.__class__.__name__ == "Elves"):
+            super().ReceiveAttack((attacker.attackPoint*(0.75))/(self.healthPoint))
+        else:
+            print('Something has gone wrong!')
+
+    def PurchaseWeapons(self,weapon):
+        super().PurchaseWeapons(2*weapon)
+        return 20*weapon
     
-    def PurchaseArmors(self):
-        pass
+    def PurchaseArmors(self,armor):
+        super().PurchaseArmors(3*armor)
+        return armor
 
 
     def Print(self):
